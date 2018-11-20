@@ -11,7 +11,7 @@ int main (int argc, char ** argv){
     int f2 = open(argv[2], O_RDONLY);
 
     if (f1 == -1 || f2 == -1){
-        printf("can't open file");
+        printf("1");
         close(f1);
         close(f2);
         return 0;
@@ -19,7 +19,7 @@ int main (int argc, char ** argv){
 
     struct stat f1Stat, f2Stat;
     if (stat(argv[1], &f1Stat)==-1 || stat(argv[2], &f2Stat)==-1) {
-        printf("can't get file info");
+        printf("1");
         close(f1);
         close(f2);
         return 0;
@@ -28,23 +28,23 @@ int main (int argc, char ** argv){
     int size1 = f1Stat.st_size;
     int size2 = f2Stat.st_size;
     if (size1 != size2){
-        printf("files don't match");
+        printf("1");
         close(f1);
         close(f2);
         return 0;
     }
 
-    int arr1[size1];
-    int arr2[size2];
+    char arr1[size1];
+    char arr2[size2];
     int rd1 = read(f1, arr1, size1);
     int rd2 = read(f2, arr2, size2);
 
     for (i=0; i<size1; i++) {
         if (arr1[i] != arr2[i]) {
-//            printf("1");
+            printf("1");
             close(f1);
             close(f2);
-            //return 0;
+            return 0;
         }
     }
     printf("2");
