@@ -11,6 +11,7 @@ struct process{
 
 void FCFS (struct process* prcsArr, int numOfProc){
     int i;
+    prcsArr[0].waitingTime=prcsArr[0].arrTime;
     for (int i=0; i<numOfProc; i++){
         if (i > 0) //start checking from [1]
             if (prcsArr[i].arrTime < prcsArr[i-1].arrTime + prcsArr[i-1].burstTime) //check that start time isn't before previous ends
