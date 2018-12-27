@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+
 
 struct process{
     int pid;
@@ -17,6 +19,19 @@ void FCFS (struct process prcsArr[]){
 }
 
 int main() {
-    printf("");
+    printf("Enter amount of processes:");
+    int numOfProc;
+    int option;
+    scanf("%d", numOfProc);
+    int i;
+    struct process* processes = malloc(numOfProc*sizeof(int));
+    for (i=0; i<numOfProc; i++) {
+        printf("Enter arrival time and burst time");
+        scanf("%d %d", processes[i].arrTime, processes[i].burstTime);
+        processes[i].pid=i;
+    }
+    printf("Enter algorithm number:");
+    scanf("%d", option);
+    
     return 0;
 }
