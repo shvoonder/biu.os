@@ -12,12 +12,16 @@ struct process{
 void FCFS (struct process* prcsArr, int numOfProc){
     int i;
     prcsArr[0].waitingTime=prcsArr[0].arrTime;
-    for (int i=0; i<numOfProc; i++){
+    for (i=0; i<numOfProc; i++){
         if (i > 0) { //start checking from [1]
-            if (prcsArr[i].arrTime < prcsArr[i - 1].arrTime + prcsArr[i - 1].burstTime) //check that start time isn't before previous ends
+            if (prcsArr[i].arrTime < prcsArr[i - 1].arrTime + prcsArr[i - 1].burstTime) { //check that start time isn't before previous ends
                 prcsArr[i].arrTime = prcsArr[i - 1].arrTime + prcsArr[i - 1].burstTime; //if it does, change start time
-                prcsArr[i].waitingTime = prcsArr[i-1].arrTime+prcsArr[i-1].burstTime; //calculate waiting time for each process
+                prcsArr[i].waitingTime = prcsArr[i - 1].arrTime + prcsArr[i - 1].burstTime;//calculate waiting time for each process
+            }
+            else
+                prcsArr[i].waitingTime=prcsArr[i].arrTime;
         }
+
         printf("#%d:[%d]-[%d]\n",prcsArr[i].pid, prcsArr[i].arrTime, prcsArr[i].arrTime + prcsArr[i].burstTime); //print times
     }
     for (i=0; i<numOfProc; i++)
@@ -30,6 +34,7 @@ void RR (struct process prcsArr[]){
 
 int main() {
     printf("Enter amount of processes:\n");
+    int timeQuantum;
     int numOfProc;
     int option;
     scanf("%d", &numOfProc);
@@ -42,6 +47,10 @@ int main() {
     }
     printf("Enter algorithm number:\n");
     scanf("%d", &option);
+    if (option == 2){
+        printf("Enter quantum:\n");
+        scanf("%d", &timeQuantum);
+    }
     FCFS(processes, numOfProc);
     return 0;
 }
