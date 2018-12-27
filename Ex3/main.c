@@ -13,15 +13,15 @@ void FCFS (struct process* prcsArr, int numOfProc){
     int i;
     prcsArr[0].waitingTime=prcsArr[0].arrTime;
     for (int i=0; i<numOfProc; i++){
-        if (i > 0) //start checking from [1]
-            if (prcsArr[i].arrTime < prcsArr[i-1].arrTime + prcsArr[i-1].burstTime) //check that start time isn't before previous ends
-                prcsArr[i].waitingTime = prcsArr[i].arrTime;
-                prcsArr[i].arrTime = prcsArr[i-1].arrTime + prcsArr[i-1].burstTime; //if it does, change start time
-                prcsArr[i].waitingTime = prcsArr[i].arrTime-prcsArr[i].waitingTime+prcsArr[i-1].arrTime+prcsArr[i-1].burstTime;
-        printf("#%d:[%d]-[%d]\n",prcsArr[i].pid, prcsArr[i].arrTime, prcsArr[i].arrTime + prcsArr[i].burstTime);
+        if (i > 0) { //start checking from [1]
+            if (prcsArr[i].arrTime < prcsArr[i - 1].arrTime + prcsArr[i - 1].burstTime) //check that start time isn't before previous ends
+                prcsArr[i].arrTime = prcsArr[i - 1].arrTime + prcsArr[i - 1].burstTime; //if it does, change start time
+                prcsArr[i].waitingTime = prcsArr[i-1].arrTime+prcsArr[i-1].burstTime; //calculate waiting time for each process
+        }
+        printf("#%d:[%d]-[%d]\n",prcsArr[i].pid, prcsArr[i].arrTime, prcsArr[i].arrTime + prcsArr[i].burstTime); //print times
     }
     for (i=0; i<numOfProc; i++)
-        printf("Process %d wiating time: %d", prcsArr[i].pid, prcsArr[i].waitingTime);
+        printf("Process %d waiting time: %d\n", prcsArr[i].pid, prcsArr[i].waitingTime); //print waiting time
 }
 
 void RR (struct process prcsArr[]){
