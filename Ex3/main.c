@@ -6,30 +6,47 @@ struct process{
     int pid;
     int burstTime;
     int arrTime;
+    int arrTimeUpdate;
     int waitingTime;
 };
 
-void FCFS (struct process* prcsArr, int numOfProc){
+void Dequeue (int* prcsQueue, int currNumOfProc){ //delete first element in the queue
     int i;
-    prcsArr[0].waitingTime=prcsArr[0].arrTime;
-    for (i=0; i<numOfProc; i++){
-        if (i > 0) { //start checking from [1]
-            if (prcsArr[i].arrTime < prcsArr[i - 1].arrTime + prcsArr[i - 1].burstTime) { //check that start time isn't before previous ends
-                prcsArr[i].arrTime = prcsArr[i - 1].arrTime + prcsArr[i - 1].burstTime; //if it does, change start time
-                prcsArr[i].waitingTime = prcsArr[i - 1].arrTime + prcsArr[i - 1].burstTime;//calculate waiting time for each process
-            }
-            else
-                prcsArr[i].waitingTime=prcsArr[i].arrTime;
-        }
-
-        printf("#%d:[%d]-[%d]\n",prcsArr[i].pid, prcsArr[i].arrTime, prcsArr[i].arrTime + prcsArr[i].burstTime); //print times
-    }
-    for (i=0; i<numOfProc; i++)
-        printf("Process %d waiting time: %d\n", prcsArr[i].pid, prcsArr[i].waitingTime); //print waiting time
+    if (currNumOfProc>1) //check that there are at least 2 processes in the queue
+        for (i=0; i < currNumOfProc-1; i++)
+            prcsQueue[i] = prcsQueue[i+1];
+    else
+        prcsQueue[0]=0;
 }
 
-void RR (struct process prcsArr[]){
+void Enqueue (int* prcsQueue, int currNumOfProc, int pid){
+    prcsQueue[currNumOfProc] = pid;
+}
 
+void FCFS (struct process* prcsArr, int numOfProc){
+    int i;
+    for (i=0; i<numOfProc; i++){
+        prcsArr[i].waitingTime = prcsArr[i].arrTime;
+        prcsArr[i].arrTimeUpdate=prcsArr[i].arrTime;
+        if (i > 0) { //start checking from [1]
+            if (prcsArr[i].arrTime < prcsArr[i - 1].arrTime + prcsArr[i - 1].burstTime) { //check that start time isn't before previous ends
+                prcsArr[i].arrTimeUpdate = prcsArr[i - 1].arrTimeUpdate + prcsArr[i - 1].burstTime; //if it does, change start time
+                prcsArr[i].waitingTime = prcsArr[i].arrTime;//calculate waiting time for each process
+            }
+        }
+        printf("#%d:[%d]-[%d]\n",prcsArr[i].pid, prcsArr[i].arrTimeUpdate, prcsArr[i].arrTimeUpdate + prcsArr[i].burstTime); //print times
+    }
+    for (i=0; i<numOfProc; i++)
+        printf("Process %d waiting time: %d\n", prcsArr[i].pid, prcsArr[i].arrTimeUpdate-prcsArr[i].arrTime); //print waiting time
+}
+
+void RR (struct process* prcsArr, int numOfProc){
+    int* prcsQueue = malloc(numOfProc* sizeof(int));
+    int i;
+
+    for (i=0; i<numOfProc; i++){
+        if (prcsArr)
+    }
 }
 
 int main() {
@@ -39,7 +56,7 @@ int main() {
     int option;
     scanf("%d", &numOfProc);
     int i;
-    struct process* processes = malloc(numOfProc*sizeof(int));
+    struct process* processes = malloc(numOfProc*sizeof(struct process));
     for (i=0; i<numOfProc; i++) {
         printf("Enter arrival time and burst time\n");
         scanf("%d %d", &processes[i].arrTime, &processes[i].burstTime);
