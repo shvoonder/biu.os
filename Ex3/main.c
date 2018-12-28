@@ -40,12 +40,24 @@ void FCFS (struct process* prcsArr, int numOfProc){
         printf("Process %d waiting time: %d\n", prcsArr[i].pid, prcsArr[i].arrTimeUpdate-prcsArr[i].arrTime); //print waiting time
 }
 
-void RR (struct process* prcsArr, int numOfProc){
+void RR (struct process* prcsArr, int numOfProc, int timeQuantum){
     int* prcsQueue = malloc(numOfProc* sizeof(int));
-    int i;
-
+    int i, j;
+    Enqueue(prcsQueue,1,1);
+    int currNumOfProc=1;
+    int timeElapsed = prcsArr[0].arrTime;
     for (i=0; i<numOfProc; i++){
-        if (prcsArr)
+        for (j=0; j<numOfProc; j++){ //find needed process
+            if (prcsQueue[0] == prcsArr[i].pid){
+                Dequeue(prcsQueue, currNumOfProc);
+                currNumOfProc--;
+                prcsArr[i].burstTime-=timeQuantum;
+                if (prcsArr[i].burstTime<0)
+                    timeElapsed = timeElapsed+timeQuantum+prcsArr[i].burstTime;
+                else
+                    timeElapsed = timeElapsed+timeQuantum;
+            }
+        }
     }
 }
 
