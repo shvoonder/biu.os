@@ -8,20 +8,8 @@ struct process{
     int arrTime;
     int arrTimeUpdate;
     int waitingTime;
+    int endTime; // for each quantum in RR
 };
-
-void Dequeue (int* prcsQueue, int currNumOfProc){ //delete first element in the queue
-    int i;
-    if (currNumOfProc>1) //check that there are at least 2 processes in the queue
-        for (i=0; i < currNumOfProc-1; i++)
-            prcsQueue[i] = prcsQueue[i+1];
-    else
-        prcsQueue[0]=0;
-}
-
-void Enqueue (int* prcsQueue, int currNumOfProc, int pid){
-    prcsQueue[currNumOfProc] = pid;
-}
 
 void FCFS (struct process* prcsArr, int numOfProc){
     int i;
@@ -31,7 +19,6 @@ void FCFS (struct process* prcsArr, int numOfProc){
         if (i > 0) { //start checking from [1]
             if (prcsArr[i].arrTime < prcsArr[i - 1].arrTime + prcsArr[i - 1].burstTime) { //check that start time isn't before previous ends
                 prcsArr[i].arrTimeUpdate = prcsArr[i - 1].arrTimeUpdate + prcsArr[i - 1].burstTime; //if it does, change start time
-                prcsArr[i].waitingTime = prcsArr[i].arrTime;//calculate waiting time for each process
             }
         }
         printf("#%d:[%d]-[%d]\n",prcsArr[i].pid, prcsArr[i].arrTimeUpdate, prcsArr[i].arrTimeUpdate + prcsArr[i].burstTime); //print times
@@ -41,21 +28,30 @@ void FCFS (struct process* prcsArr, int numOfProc){
 }
 
 void RR (struct process* prcsArr, int numOfProc, int timeQuantum){
-    int* prcsQueue = malloc(numOfProc* sizeof(int));
-    int i, j;
-    Enqueue(prcsQueue,1,1);
-    int currNumOfProc=1;
-    int timeElapsed = prcsArr[0].arrTime;
-    for (i=0; i<numOfProc; i++){
-        for (j=0; j<numOfProc; j++){ //find needed process
-            if (prcsQueue[0] == prcsArr[i].pid){
-                Dequeue(prcsQueue, currNumOfProc);
-                currNumOfProc--;
-                prcsArr[i].burstTime-=timeQuantum;
-                if (prcsArr[i].burstTime<0)
-                    timeElapsed = timeElapsed+timeQuantum+prcsArr[i].burstTime;
-                else
-                    timeElapsed = timeElapsed+timeQuantum;
+    prcsArr[0].arrTimeUpdate=prcsArr[0].arrTime;
+    int numEndedProc = 0;
+    int i=0;
+    while(numEndedProc != numOfProc) {
+        for (i = 0; i < numOfProc; i++) {
+            if (prcsArr[i].burstTime != 0) {
+                if (prcsArr[i].burstTime <= timeQuantum) {
+                    prcsArr[i].endTime = prcsArr[i].arrTimeUpdate + prcsArr[i].burstTime;
+                    printf("#%d:[%d]-[%d]\n", prcsArr[i].pid, prcsArr[i].arrTimeUpdate, prcsArr[i].endTime);
+                    prcsArr[i].burstTime = 0;
+                    numEndedProc++;
+                    if (prcsArr[i + 1].arrTime >= prcsArr[i].endTime)
+                        prcsArr[i + 1].arrTimeUpdate = prcsArr[i + 1].arrTime;
+                    else
+                        prcsArr[i + 1].arrTimeUpdate = prcsArr[i].endTime;
+                } else {
+                    prcsArr[i].endTime = prcsArr[i].arrTimeUpdate + timeQuantum;
+                    prcsArr[i].burstTime -= timeQuantum;
+                    printf("#%d:[%d]-[%d]\n", prcsArr[i].pid, prcsArr[i].arrTimeUpdate, prcsArr[i].endTime);
+                    if (prcsArr[i + 1].arrTime >= prcsArr[i].endTime)
+                        prcsArr[i + 1].arrTimeUpdate = prcsArr[i + 1].arrTime;
+                    else
+                        prcsArr[i + 1].arrTimeUpdate = prcsArr[i].endTime;
+                }
             }
         }
     }
